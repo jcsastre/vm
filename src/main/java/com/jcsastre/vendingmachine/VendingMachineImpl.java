@@ -82,6 +82,16 @@ public class VendingMachineImpl implements VendingMachine {
     @Override
     public void selectProduct(Product product) throws NoStockException, NoChangeException {
 
+        if (productsDeposit.checkThereIsProductStock(product)) {
+
+            currentProduct = product;
+
+            if (currentBalanceInCents >= currentProduct.getPriceInCents()) {
+                tryToReleaseProductAndReturnChangeIfRequired();
+            }
+        } else {
+            throw new NoStockException();
+        }
     }
 
     @Override

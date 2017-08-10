@@ -32,6 +32,8 @@ public class VendingMachineImplAtStateProductNotSelectedTests {
         MockitoAnnotations.initMocks(this);
     }
 
+    // insertCoin tests
+
     @Test
     public void Given_NoBalance_WhenInsertingCoin_Then_CorrectlyUpdateBalance()
         throws NoChangeException {
@@ -66,6 +68,8 @@ public class VendingMachineImplAtStateProductNotSelectedTests {
         assertThat(vendingMachineImpl.collectCoinsAtRepaymentPort(), is(Optional.empty()));
         assertThat(vendingMachineImpl.collectProductAtTakeoutPort(), is(Optional.empty()));
     }
+
+    // selectProduct tests
 
     @Test // 1.2.1
     public void Given_NoStockOfAProduct_When_SelectingThatProduct_Then_CorrectlyThrowNoStockException()
