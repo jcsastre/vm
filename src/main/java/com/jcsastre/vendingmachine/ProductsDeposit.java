@@ -5,7 +5,10 @@ import java.util.Optional;
 public interface ProductsDeposit {
 
     void addProduct(Product product);
+
     boolean checkThereIsProductStock(Product product);
 
     Optional<Product> tryToReleaseProduct();
+
+    Integer getMaximumCapacityByProduct(Product product);
 }

@@ -27,7 +27,7 @@ import java.util.Optional;
 public interface VendingMachine {
 
     /**
-     * <p>Command representing a customer inserting a coin.</p>
+     * <p>Command representing a Customer inserting a coin.</p>
      *
      * @param coin the {@link Coin] inserted.
      * @throws NoChangeException if a product is already selected, but is not
@@ -37,7 +37,7 @@ public interface VendingMachine {
     void insertCoin(Coin coin) throws NoChangeException;
 
     /**
-     * <p>Command representing a customer selecting a product.</p>
+     * <p>Command representing a Customer selecting a product.</p>
      *
      * @param product the {@link Product} selected.
      * @throws NoStockException if no stock available.
@@ -48,7 +48,7 @@ public interface VendingMachine {
     void selectProduct(Product product) throws NoStockException, NoChangeException, ProductAlreadySelected;
 
     /**
-     * <p>Command representing a customer pressing the cancel button.</p>
+     * <p>Command representing a Customer pressing the cancel button.</p>
      *
      * <p>If a product is selected, then should cancel it. If there is balance, then
      * should cancel it and return coins at the repayment port.</p>
@@ -58,11 +58,11 @@ public interface VendingMachine {
     void cancel() throws InvalidStateException;
 
     /**
-     * <p>Represents a Supplier reseting the vending the machine:</p>
+     * <p>Represents a Supplier resetting the vending the machine:</p>
      *
      * <ul>
-     *     <li>Normalizes the coins deposit (depends on the implementation).</li>
-     *     <li>Refills products stock at maximum capacity (depends on the implementation).</li>
+     *     <li>Normalizes the coins deposit.</li>
+     *     <li>Refills products stock at maximum capacity.</li>
      *     <li>If there is balance then is set to zero.</li>
      *     <li>If there is a selected product then is set to none.</li>
      *     <li>Removes any product of the takeout port.</li>
@@ -72,14 +72,14 @@ public interface VendingMachine {
     void reset();
 
     /**
-     * <p>Command representing a customer opening the takeout port to collect a {@link Product}</p>
+     * <p>Command representing a Customer opening the takeout port to collect a {@link Product}</p>
      *
      * @return The {@link Product} or empty if no product has been released.
      */
     Optional<Product> collectProductAtTakeoutPort();
 
     /**
-     * <p>Command representing a customer opening the repayment port to collect the change as
+     * <p>Command representing a Customer opening the repayment port to collect the change as
      * a list of {@link Coin}.</p>
      *
      * @return The list of {@link Coin} or empty if no change has been released.
@@ -87,14 +87,14 @@ public interface VendingMachine {
     Optional<List<Coin>> collectCoinsAtRepaymentPort();
 
     /**
-     * <p>Command representing a customer reading the balance indicator.</p>
+     * <p>Command representing a Customer reading the balance indicator.</p>
      *
      * @return A value representing the current balance.
      */
     Integer readBalanceInCentsIndicator();
 
     /**
-     * <p>Command representing a customer reading the selected {@link Product}.</p>
+     * <p>Command representing a Customer reading the selected {@link Product}.</p>
      *
      * @return A {@link Product} representing the current selected product or empty.
      */
