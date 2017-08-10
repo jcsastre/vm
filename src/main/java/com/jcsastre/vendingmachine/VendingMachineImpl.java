@@ -3,6 +3,7 @@ package com.jcsastre.vendingmachine;
 import com.jcsastre.vendingmachine.exception.InvalidStateException;
 import com.jcsastre.vendingmachine.exception.NoChangeException;
 import com.jcsastre.vendingmachine.exception.NoStockException;
+import com.jcsastre.vendingmachine.exception.ProductAlreadySelected;
 
 import java.util.Collections;
 import java.util.List;
@@ -80,7 +81,10 @@ public class VendingMachineImpl implements VendingMachine {
     }
 
     @Override
-    public void selectProduct(Product product) throws NoStockException, NoChangeException {
+    public void selectProduct(Product product) throws NoStockException, NoChangeException, ProductAlreadySelected {
+
+        if (currentProduct != null)
+            throw new ProductAlreadySelected();
 
         if (productsDeposit.checkThereIsProductStock(product)) {
 

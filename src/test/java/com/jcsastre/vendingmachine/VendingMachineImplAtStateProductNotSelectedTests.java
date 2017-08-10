@@ -3,6 +3,7 @@ package com.jcsastre.vendingmachine;
 import com.jcsastre.vendingmachine.exception.InvalidStateException;
 import com.jcsastre.vendingmachine.exception.NoChangeException;
 import com.jcsastre.vendingmachine.exception.NoStockException;
+import com.jcsastre.vendingmachine.exception.ProductAlreadySelected;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -73,7 +74,7 @@ public class VendingMachineImplAtStateProductNotSelectedTests {
 
     @Test // 1.2.1
     public void Given_NoStockOfAProduct_When_SelectingThatProduct_Then_CorrectlyThrowNoStockException()
-        throws NoChangeException, NoStockException {
+        throws NoChangeException, NoStockException, ProductAlreadySelected {
 
         // Given: No Stock Of A Product
         final VendingMachineImpl vendingMachineImpl = new VendingMachineImpl(coinsDeposit, productsDeposit);
@@ -92,7 +93,7 @@ public class VendingMachineImplAtStateProductNotSelectedTests {
 
     @Test // 1.2.2
     public void Given_NoBalanceEnoughForAProduct_When_SelectingThatProduct_Then_CorrectlyUpdateSelectedProduct()
-        throws NoChangeException, NoStockException {
+        throws NoChangeException, NoStockException, ProductAlreadySelected {
 
         // Given: No Balance Enough For A Product
         final VendingMachineImpl vendingMachineImpl = new VendingMachineImpl(coinsDeposit, productsDeposit);
@@ -110,7 +111,7 @@ public class VendingMachineImplAtStateProductNotSelectedTests {
 
     @Test // 1.2.3
     public void Given_ExactBalanceForAProduct_When_SelectingThatProduct_Then_CorrectlyReleaseThatProduct()
-        throws NoChangeException, NoStockException {
+        throws NoChangeException, NoStockException, ProductAlreadySelected {
 
         // Given: Exact Balance For A Product
         final VendingMachineImpl vendingMachineImpl = new VendingMachineImpl(coinsDeposit, productsDeposit);
@@ -129,7 +130,7 @@ public class VendingMachineImplAtStateProductNotSelectedTests {
 
     @Test // 1.2.4
     public void Given_MoreThanRequiredBalanceForAProductButNoChangeAvailable_When_SelectingThatProduct_Then_CorrectlyThrowNoChangeExceptionReturnCoin()
-        throws NoChangeException, NoStockException {
+        throws NoChangeException, NoStockException, ProductAlreadySelected {
 
         // Given: More Than Required Balance For A Product But No ChangeAvailable
         final VendingMachineImpl vendingMachineImpl = new VendingMachineImpl(coinsDeposit, productsDeposit);
@@ -150,7 +151,7 @@ public class VendingMachineImplAtStateProductNotSelectedTests {
 
     @Test // 1.2.5
     public void Given_MoreThanRequiredBalanceForAProduct_When_SelectingThatProduct_Then_CorrectlyReleaseTheProduct()
-        throws NoChangeException, NoStockException {
+        throws NoChangeException, NoStockException, ProductAlreadySelected {
 
         // Given: More Than Required Balance For A Product
         final VendingMachineImpl vendingMachineImpl = new VendingMachineImpl(coinsDeposit, productsDeposit);
