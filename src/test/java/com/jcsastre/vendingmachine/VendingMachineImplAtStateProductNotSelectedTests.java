@@ -20,12 +20,24 @@ import static org.mockito.Mockito.when;
 
 public class VendingMachineImplAtStateProductNotSelectedTests {
 
+    @Mock
+    private CoinsDeposit coinsDeposit;
+
+    @Mock
+    private ProductsDeposit productsDeposit;
+
+    @Before
+    public void setUp() {
+
+        MockitoAnnotations.initMocks(this);
+    }
+
     @Test
     public void Given_ProductNotSelectedAndNoBalance_WhenInsertingCoin_Then_CorrectlyUpdateBalance()
         throws NoChangeException {
 
         // Given: Product Not Selected And NoBalance
-        final VendingMachineImpl vendingMachineImpl = new VendingMachineImpl();
+        final VendingMachineImpl vendingMachineImpl = new VendingMachineImpl(coinsDeposit, productsDeposit);
 
         // When: Inserting Coin
         vendingMachineImpl.insertCoin(Coin.TWO_EUROS);
@@ -42,7 +54,7 @@ public class VendingMachineImplAtStateProductNotSelectedTests {
         throws NoChangeException {
 
         // Given: Product Not Selected And Balance
-        final VendingMachineImpl vendingMachineImpl = new VendingMachineImpl();
+        final VendingMachineImpl vendingMachineImpl = new VendingMachineImpl(coinsDeposit, productsDeposit);
         Whitebox.setInternalState(vendingMachineImpl,"currentBalanceInCents",100);
 
         // When: Inserting Coin
