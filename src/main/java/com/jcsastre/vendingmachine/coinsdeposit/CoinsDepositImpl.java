@@ -32,7 +32,6 @@ public class CoinsDepositImpl implements CoinsDeposit {
             );
 
         if (optChange.isPresent()) {
-            //TODO
             final List<Coin> coinsRequiredForChange = optChange.get();
             coins.removeAll(coinsRequiredForChange);
             return Optional.of(coinsRequiredForChange);
