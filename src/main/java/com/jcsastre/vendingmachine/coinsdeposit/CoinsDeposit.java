@@ -1,4 +1,6 @@
-package com.jcsastre.vendingmachine;
+package com.jcsastre.vendingmachine.coinsdeposit;
+
+import com.jcsastre.vendingmachine.Coin;
 
 import java.util.List;
 import java.util.Optional;

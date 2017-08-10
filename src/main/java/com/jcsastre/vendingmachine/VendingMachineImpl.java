@@ -1,5 +1,6 @@
 package com.jcsastre.vendingmachine;
 
+import com.jcsastre.vendingmachine.coinsdeposit.CoinsDeposit;
 import com.jcsastre.vendingmachine.exception.InvalidStateException;
 import com.jcsastre.vendingmachine.exception.NoChangeException;
 import com.jcsastre.vendingmachine.exception.NoStockException;

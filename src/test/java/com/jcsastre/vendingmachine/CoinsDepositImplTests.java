@@ -1,6 +1,7 @@
 package com.jcsastre.vendingmachine;
 
-import com.jcsastre.vendingmachine.Coin;
+import com.jcsastre.vendingmachine.coinsdeposit.CoinsChangeCalculator;
+import com.jcsastre.vendingmachine.coinsdeposit.CoinsDepositImpl;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -15,6 +16,9 @@ import static org.hamcrest.core.Is.is;
 import static org.mockito.Mockito.when;
 
 public class CoinsDepositImplTests {
+
+    @Mock
+    private CoinsChangeCalculator coinsChangeCalculator;
 
     private ArrayList<Coin> coins;
 
@@ -34,7 +38,7 @@ public class CoinsDepositImplTests {
     public void Given_EmptyDeposit_When_InsertingCoin_Then_CorrectlyUpdatesDepositedCoins() {
 
         // Given: Empty Deposit
-        final CoinsDepositImpl coinsDepositImpl = new CoinsDepositImpl();
+        final CoinsDepositImpl coinsDepositImpl = new CoinsDepositImpl(coinsChangeCalculator);
 
         // When: Inserting Coin
         coinsDepositImpl.insertCoin(Coin.ONE_EURO);
@@ -50,7 +54,7 @@ public class CoinsDepositImplTests {
     public void Given_NonEmptyDeposit_When_InsertingCoin_Then_CorrectlyUpdatesDepositedCoins() {
 
         // Given: Not Empty Deposit
-        final CoinsDepositImpl coinsDepositImpl = new CoinsDepositImpl();
+        final CoinsDepositImpl coinsDepositImpl = new CoinsDepositImpl(coinsChangeCalculator);
         Whitebox.setInternalState(coinsDepositImpl, "coins", coins);
 
         // When: Inserting Coin
@@ -67,8 +71,15 @@ public class CoinsDepositImplTests {
     public void Given_CoinsToReleaseAnAmount_When_TryingToReleaseThatAmount_Then_CorrectlyReleasesThatAmount() {
 
         // Given: Coins To Release An Amount
-        final CoinsDepositImpl coinsDepositImpl = new CoinsDepositImpl();
+        final CoinsDepositImpl coinsDepositImpl = new CoinsDepositImpl(coinsChangeCalculator);
         Whitebox.setInternalState(coinsDepositImpl, "coins", coins);
+        when(
+            coinsChangeCalculator.calculate(
+                coins,
+                Coin.TWO_EUROS.getValueInCents()+Coin.ONE_EURO.getValueInCents()
+            )
+        )
+            .thenReturn(Optional.of(Arrays.asList(Coin.TWO_EUROS, Coin.ONE_EURO)));
 
         // When: Trying To Release That Amount
         final Optional<List<Coin>> optCoins = coinsDepositImpl.tryToReleaseAmount(
@@ -87,8 +98,15 @@ public class CoinsDepositImplTests {
     public void Given_NoCoinsToReleaseAnAmount_When_TryingToReleaseThatAmount_Then_CorrectlyDontReleasesThatAmount() {
 
         // Given: No Coins To Release An Amount
-        final CoinsDepositImpl coinsDepositImpl = new CoinsDepositImpl();
+        final CoinsDepositImpl coinsDepositImpl = new CoinsDepositImpl(coinsChangeCalculator);
         Whitebox.setInternalState(coinsDepositImpl, "coins", coins);
+        when(
+            coinsChangeCalculator.calculate(
+                coins,
+                Coin.TEN_CENTS.getValueInCents()
+            )
+        )
+            .thenReturn(Optional.empty());
 
         // When: Trying To Release That Amount
         final Optional<List<Coin>> optCoins = coinsDepositImpl.tryToReleaseAmount(Coin.TEN_CENTS.getValueInCents());
@@ -105,7 +123,7 @@ public class CoinsDepositImplTests {
     public void Given_AnySetOfCoins_When_SettingDepositedCoins_Then_CorrectlyReplacesSetOfCoins() {
 
         // Given: Not Empty Deposit
-        final CoinsDepositImpl coinsDepositImpl = new CoinsDepositImpl();
+        final CoinsDepositImpl coinsDepositImpl = new CoinsDepositImpl(coinsChangeCalculator);
         Whitebox.setInternalState(coinsDepositImpl, "coins", coins);
 
         // When: Setting Deposited Coins
