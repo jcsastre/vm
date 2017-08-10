@@ -3,6 +3,7 @@ package com.jcsastre.vendingmachine;
 import com.jcsastre.vendingmachine.exception.InvalidStateException;
 import com.jcsastre.vendingmachine.exception.NoChangeException;
 import com.jcsastre.vendingmachine.exception.NoStockException;
+import com.jcsastre.vendingmachine.exception.ProductAlreadySelected;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -143,5 +144,68 @@ public class VendingMachineImplAtStateProductSelectedTests {
         assertThat(vendingMachineImpl.readSelectedProductIndicator(), is(Optional.empty()));
         assertThat(vendingMachineImpl.collectCoinsAtRepaymentPort(), is(Optional.of(Collections.singletonList(Coin.ONE_EURO))));
         assertThat(vendingMachineImpl.collectProductAtTakeoutPort(), is(Optional.of(Product.COKE)));
+    }
+
+    // selectProduct tests
+
+    @Test // 2.2.1
+    public void Given_BalanceNotEnough_When_SelectingAnyProduct_Then_CorrectlyThrowProductAlreadySelected()
+        throws NoChangeException, NoStockException, ProductAlreadySelected {
+
+        // Given: Balance Not Enough
+        final VendingMachineImpl vendingMachineImpl = new VendingMachineImpl(coinsDeposit, productsDeposit);
+        Whitebox.setInternalState(vendingMachineImpl,"currentProduct", Product.COKE);
+        Whitebox.setInternalState(
+            vendingMachineImpl,
+            "currentBalanceInCents",
+            Coin.FIFTY_CENTS.getValueInCents()
+        );
+
+        // When: Selecting Any Product
+        com.googlecode.catchexception.apis.BDDCatchException.when(vendingMachineImpl).selectProduct(Product.SPRITE);
+
+        // Then: Correctly Throw Product Already Selected
+        then(caughtException()).isInstanceOf(ProductAlreadySelected.class);
+        assertThat(vendingMachineImpl.readBalanceInCentsIndicator(), is(Coin.FIFTY_CENTS.getValueInCents()));
+        assertThat(vendingMachineImpl.readSelectedProductIndicator(), is(Optional.of(Product.COKE)));
+        assertThat(vendingMachineImpl.collectCoinsAtRepaymentPort(), is(Optional.empty()));
+        assertThat(vendingMachineImpl.collectProductAtTakeoutPort(), is(Optional.empty()));
+    }
+
+
+    @Test // 2.3.1
+    public void Given_NoBalance_When_Canceling_Then_CorrectlyResetTheCurrentSelectedProduct() throws InvalidStateException {
+
+        // Given: No Balance
+        final VendingMachineImpl vendingMachineImpl = new VendingMachineImpl(coinsDeposit, productsDeposit);
+        Whitebox.setInternalState(vendingMachineImpl,"currentProduct", Product.COKE);
+
+        // When: Canceling
+        vendingMachineImpl.cancel();
+
+        // Then: Correctly Reset The Current Selected Product
+        assertThat(vendingMachineImpl.readBalanceInCentsIndicator(), is(0));
+        assertThat(vendingMachineImpl.readSelectedProductIndicator(), is(Optional.empty()));
+        assertThat(vendingMachineImpl.collectCoinsAtRepaymentPort(), is(Optional.empty()));
+        assertThat(vendingMachineImpl.collectProductAtTakeoutPort(), is(Optional.empty()));
+    }
+
+    @Test // 2.3.2
+    public void Given_Balance_When_Canceling_Then_CorrectlyReleaseBalanceAndResetTheCurrentSelectedProduct() throws InvalidStateException {
+
+        // Given: Balance
+        final VendingMachineImpl vendingMachineImpl = new VendingMachineImpl(coinsDeposit, productsDeposit);
+        Whitebox.setInternalState(vendingMachineImpl,"currentProduct", Product.COKE);
+        Whitebox.setInternalState(vendingMachineImpl,"currentBalanceInCents", 50);
+        when(coinsDeposit.tryToReleaseAmount(50)).thenReturn(Optional.of(Collections.singletonList(Coin.FIFTY_CENTS)));
+
+        // When: Canceling
+        vendingMachineImpl.cancel();
+
+        // Then: Correctly Release Balance
+        assertThat(vendingMachineImpl.readBalanceInCentsIndicator(), is(0));
+        assertThat(vendingMachineImpl.readSelectedProductIndicator(), is(Optional.empty()));
+        assertThat(vendingMachineImpl.collectCoinsAtRepaymentPort(), is(Optional.of(Collections.singletonList(Coin.FIFTY_CENTS))));
+        assertThat(vendingMachineImpl.collectProductAtTakeoutPort(), is(Optional.empty()));
     }
 }
