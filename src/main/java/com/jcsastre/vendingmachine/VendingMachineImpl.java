@@ -97,6 +97,19 @@ public class VendingMachineImpl implements VendingMachine {
     @Override
     public void cancel() throws InvalidStateException {
 
+        if (currentBalanceInCents > 0) {
+
+            final Optional<List<Coin>> optChange = coinsDeposit.tryToReleaseAmount(currentBalanceInCents);
+            if (!optChange.isPresent()) {
+                throw new InvalidStateException();
+            }
+
+            coinsAtRepaymentPort = optChange.get();
+            currentBalanceInCents = 0;
+
+        }
+
+        currentProduct = null;
     }
 
     @Override
