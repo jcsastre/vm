@@ -167,4 +167,40 @@ public class VendingMachineImplAtStateProductNotSelectedTests {
         assertThat(vendingMachineImpl.collectCoinsAtRepaymentPort(), is(Optional.of(Collections.singletonList(Coin.FIFTY_CENTS))));
         assertThat(vendingMachineImpl.collectProductAtTakeoutPort(), is(Optional.of(Product.COKE)));
     }
+
+    // cancel tests
+
+    @Test // 1.3.1
+    public void Given_NoBalance_When_Canceling_Then_CorrectlyDoNothing() throws InvalidStateException {
+
+        // Given: No Balance
+        final VendingMachineImpl vendingMachineImpl = new VendingMachineImpl(coinsDeposit, productsDeposit);
+
+        // When: Canceling
+        vendingMachineImpl.cancel();
+
+        // Then: Correctly Do Nothing
+        assertThat(vendingMachineImpl.readBalanceInCentsIndicator(), is(0));
+        assertThat(vendingMachineImpl.readSelectedProductIndicator(), is(Optional.empty()));
+        assertThat(vendingMachineImpl.collectCoinsAtRepaymentPort(), is(Optional.empty()));
+        assertThat(vendingMachineImpl.collectProductAtTakeoutPort(), is(Optional.empty()));
+    }
+
+    @Test // 1.3.2
+    public void Given_Balance_When_Canceling_Then_CorrectlyReleaseBalance() throws InvalidStateException {
+
+        // Given: Balance
+        final VendingMachineImpl vendingMachineImpl = new VendingMachineImpl(coinsDeposit, productsDeposit);
+        Whitebox.setInternalState(vendingMachineImpl,"currentBalanceInCents", 50);
+        when(coinsDeposit.tryToReleaseAmount(50)).thenReturn(Optional.of(Collections.singletonList(Coin.FIFTY_CENTS)));
+
+        // When: Canceling
+        vendingMachineImpl.cancel();
+
+        // Then: Correctly Release Balance
+        assertThat(vendingMachineImpl.readBalanceInCentsIndicator(), is(0));
+        assertThat(vendingMachineImpl.readSelectedProductIndicator(), is(Optional.empty()));
+        assertThat(vendingMachineImpl.collectCoinsAtRepaymentPort(), is(Optional.of(Collections.singletonList(Coin.FIFTY_CENTS))));
+        assertThat(vendingMachineImpl.collectProductAtTakeoutPort(), is(Optional.empty()));
+    }
 }
