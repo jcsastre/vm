@@ -12,4 +12,9 @@ public interface CoinsChangeCalculator {
         List<Coin> availableCoins,
         Integer amountInCents
     );
+
+    public final static CoinsChangeCalculator coinChangeCalculatorAsBiggestAsPossible =
+        (List<Coin> availableCoins, Integer amountInCents) -> {
+            return Optional.empty();
+        };
 }

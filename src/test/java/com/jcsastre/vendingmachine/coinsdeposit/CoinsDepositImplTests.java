@@ -1,7 +1,6 @@
-package com.jcsastre.vendingmachine;
+package com.jcsastre.vendingmachine.coinsdeposit;
 
-import com.jcsastre.vendingmachine.coinsdeposit.CoinsChangeCalculator;
-import com.jcsastre.vendingmachine.coinsdeposit.CoinsDepositImpl;
+import com.jcsastre.vendingmachine.Coin;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -10,7 +9,6 @@ import org.powermock.reflect.Whitebox;
 
 import java.util.*;
 
-import static org.assertj.core.api.BDDAssertions.then;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.mockito.Mockito.when;
