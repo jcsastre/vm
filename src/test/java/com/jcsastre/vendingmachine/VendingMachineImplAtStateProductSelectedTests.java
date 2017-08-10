@@ -172,6 +172,7 @@ public class VendingMachineImplAtStateProductSelectedTests {
         assertThat(vendingMachineImpl.collectProductAtTakeoutPort(), is(Optional.empty()));
     }
 
+    // cancel tests
 
     @Test // 2.3.1
     public void Given_NoBalance_When_Canceling_Then_CorrectlyResetTheCurrentSelectedProduct() throws InvalidStateException {
