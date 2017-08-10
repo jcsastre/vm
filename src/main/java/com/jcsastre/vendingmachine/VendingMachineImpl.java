@@ -10,6 +10,14 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * <p>Class implementing the {@link VendingMachine} interface.</p>
+ *
+ * <p>Is based in {@link CoinsDeposit} to manage the deposited coins, and in
+ * {@link ProductsDeposit} to manage the stock of products.</p>
+ *
+ * @author Juan Carlos Sastre
+ */
 public class VendingMachineImpl implements VendingMachine {
 
     private CoinsDeposit coinsDeposit;
@@ -32,6 +40,9 @@ public class VendingMachineImpl implements VendingMachine {
         this.productsDeposit = productsDeposit;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void insertCoin(Coin coin) throws NoChangeException {
 
@@ -58,6 +69,106 @@ public class VendingMachineImpl implements VendingMachine {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void selectProduct(Product product) throws NoStockException, NoChangeException, ProductAlreadySelected {
+
+        if (currentProduct != null)
+            throw new ProductAlreadySelected();
+
+        if (productsDeposit.checkThereIsProductStock(product)) {
+
+            currentProduct = product;
+
+            if (currentBalanceInCents >= currentProduct.getPriceInCents()) {
+                tryToReleaseProductAndReturnChangeIfRequired();
+            }
+        } else {
+            throw new NoStockException();
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void cancel() throws InvalidStateException {
+
+        if (currentBalanceInCents > 0) {
+
+            final Optional<List<Coin>> optChange = coinsDeposit.tryToReleaseAmount(currentBalanceInCents);
+            if (!optChange.isPresent()) {
+                throw new InvalidStateException();
+            }
+
+            coinsAtRepaymentPort = optChange.get();
+            currentBalanceInCents = 0;
+
+        }
+
+        currentProduct = null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void reset() {
+        //TODO
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Optional<Product> collectProductAtTakeoutPort() {
+
+        Optional<Product> optProduct = Optional.empty();
+
+        if (productAtTakeoutPort != null) {
+            optProduct = Optional.of(productAtTakeoutPort);
+            productAtTakeoutPort = null;
+        }
+
+        return optProduct;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Optional<List<Coin>> collectCoinsAtRepaymentPort() {
+
+        Optional<List<Coin>> optCoins = Optional.empty();
+
+        if (coinsAtRepaymentPort != null) {
+            optCoins = Optional.of(coinsAtRepaymentPort);
+            coinsAtRepaymentPort = null;
+        }
+
+        return optCoins;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Integer readBalanceInCentsIndicator() {
+        return currentBalanceInCents;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Optional<Product> readSelectedProductIndicator() {
+
+        return
+            Optional.ofNullable(currentProduct);
+    }
+
     private void tryToReleaseProductAndReturnChangeIfRequired() throws NoChangeException {
 
         Integer amountToReturnInCents = currentBalanceInCents - currentProduct.getPriceInCents();
@@ -79,84 +190,5 @@ public class VendingMachineImpl implements VendingMachine {
             currentBalanceInCents = 0;
             currentProduct = null;
         }
-    }
-
-    @Override
-    public void selectProduct(Product product) throws NoStockException, NoChangeException, ProductAlreadySelected {
-
-        if (currentProduct != null)
-            throw new ProductAlreadySelected();
-
-        if (productsDeposit.checkThereIsProductStock(product)) {
-
-            currentProduct = product;
-
-            if (currentBalanceInCents >= currentProduct.getPriceInCents()) {
-                tryToReleaseProductAndReturnChangeIfRequired();
-            }
-        } else {
-            throw new NoStockException();
-        }
-    }
-
-    @Override
-    public void cancel() throws InvalidStateException {
-
-        if (currentBalanceInCents > 0) {
-
-            final Optional<List<Coin>> optChange = coinsDeposit.tryToReleaseAmount(currentBalanceInCents);
-            if (!optChange.isPresent()) {
-                throw new InvalidStateException();
-            }
-
-            coinsAtRepaymentPort = optChange.get();
-            currentBalanceInCents = 0;
-
-        }
-
-        currentProduct = null;
-    }
-
-    @Override
-    public void reset() {
-
-    }
-
-    @Override
-    public Optional<Product> collectProductAtTakeoutPort() {
-
-        Optional<Product> optProduct = Optional.empty();
-
-        if (productAtTakeoutPort != null) {
-            optProduct = Optional.of(productAtTakeoutPort);
-            productAtTakeoutPort = null;
-        }
-
-        return optProduct;
-    }
-
-    @Override
-    public Optional<List<Coin>> collectCoinsAtRepaymentPort() {
-
-        Optional<List<Coin>> optCoins = Optional.empty();
-
-        if (coinsAtRepaymentPort != null) {
-            optCoins = Optional.of(coinsAtRepaymentPort);
-            coinsAtRepaymentPort = null;
-        }
-
-        return optCoins;
-    }
-
-    @Override
-    public Integer readBalanceInCentsIndicator() {
-        return currentBalanceInCents;
-    }
-
-    @Override
-    public Optional<Product> readSelectedProductIndicator() {
-
-        return
-            Optional.ofNullable(currentProduct);
     }
 }
