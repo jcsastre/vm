@@ -21,8 +21,8 @@ public class CoinChangeCalculatorAsBiggestAsPossibleTests {
 
         availableCoins = new ArrayList<>(Arrays.asList(
             Coin.TWO_EUROS,
-            Coin.ONE_EURO,
-            Coin.FIFTY_CENTS
+            Coin.FIFTY_CENTS,
+            Coin.ONE_EURO
         ));
     }
 
@@ -51,5 +51,6 @@ public class CoinChangeCalculatorAsBiggestAsPossibleTests {
             );
 
         // Then
+        assertThat(change, is(Optional.empty()));
     }
 }
