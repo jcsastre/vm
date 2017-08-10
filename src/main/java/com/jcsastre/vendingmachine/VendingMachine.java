@@ -58,16 +58,16 @@ public interface VendingMachine {
     void cancel() throws InvalidStateException;
 
     /**
-     * <p>Represents a Supplier opening the machine, reseting and normalizing coins and products.</p>
+     * <p>Represents a Supplier reseting the vending the machine:</p>
      *
-     */
-    /**
-     * CoinsDeposit normalized.
-     * ProductsDeposit normalized.
-     * currentBalance = 0
-     * currentProduct = 0
-     * clear takeout port
-     * clear repayment port
+     * <ul>
+     *     <li>Normalizes the coins deposit (depends on the implementation).</li>
+     *     <li>Refills products stock at maximum capacity (depends on the implementation).</li>
+     *     <li>If there is balance then is set to zero.</li>
+     *     <li>If there is a selected product then is set to none.</li>
+     *     <li>Removes any product of the takeout port.</li>
+     *     <li>Removes any coin of the repayment port.</li>
+     * </ul>
      */
     void reset();
 
