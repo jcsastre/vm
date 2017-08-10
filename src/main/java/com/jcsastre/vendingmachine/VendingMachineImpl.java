@@ -6,9 +6,7 @@ import com.jcsastre.vendingmachine.exception.NoChangeException;
 import com.jcsastre.vendingmachine.exception.NoStockException;
 import com.jcsastre.vendingmachine.exception.ProductAlreadySelected;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * <p>Class implementing the {@link VendingMachine} interface.</p>
@@ -116,7 +114,23 @@ public class VendingMachineImpl implements VendingMachine {
      */
     @Override
     public void reset() {
-        //TODO
+
+        //TODO: Improve
+        List<Coin> listOfCoinsToBeSetOnCoinsDeposit = new ArrayList<>();
+        Arrays.stream(Coin.values())
+            .forEach((Coin coin) -> {
+                for (int i=0; i<VendingMachine.NORMALIZED_COUNT_PER_COIN_TYPE; i++) {
+                    listOfCoinsToBeSetOnCoinsDeposit.add(coin);
+                }
+            });
+        coinsDeposit.setCoins(listOfCoinsToBeSetOnCoinsDeposit);
+
+        // TODO: Refills products stock at maximum capacity.
+
+        currentBalanceInCents = 0;
+        currentProduct = null;
+        coinsAtRepaymentPort = null;
+        productAtTakeoutPort = null;
     }
 
     /**

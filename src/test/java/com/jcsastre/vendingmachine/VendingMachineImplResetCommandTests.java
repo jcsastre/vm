@@ -8,11 +8,12 @@ import com.jcsastre.vendingmachine.exception.ProductAlreadySelected;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.mockito.Spy;
 import org.powermock.reflect.Whitebox;
 
-import java.util.Collections;
-import java.util.Optional;
+import java.util.*;
 
 import static com.googlecode.catchexception.apis.BDDCatchException.caughtException;
 import static org.assertj.core.api.BDDAssertions.then;
@@ -22,8 +23,10 @@ import static org.mockito.Mockito.when;
 
 public class VendingMachineImplResetCommandTests {
 
-    @Mock
+    @Spy
     private CoinsDeposit coinsDeposit;
+
+    private List<Coin> expectedListOfCoinsToBeSetOnCoinsDeposit;
 
     @Mock
     private ProductsDeposit productsDeposit;
@@ -32,6 +35,14 @@ public class VendingMachineImplResetCommandTests {
     public void setUp() {
 
         MockitoAnnotations.initMocks(this);
+
+        expectedListOfCoinsToBeSetOnCoinsDeposit = new ArrayList<>();
+        Arrays.stream(Coin.values())
+            .forEach((Coin coin) -> {
+                for (int i=0; i<VendingMachine.NORMALIZED_COUNT_PER_COIN_TYPE; i++) {
+                    expectedListOfCoinsToBeSetOnCoinsDeposit.add(coin);
+                }
+            });
     }
 
     @Test
@@ -46,8 +57,9 @@ public class VendingMachineImplResetCommandTests {
         vendingMachineImpl.reset();
 
         // Then
-        // Normalizes the coins deposit.
-        // Refills products stock at maximum capacity.
+        Mockito.verify(coinsDeposit).setCoins(expectedListOfCoinsToBeSetOnCoinsDeposit);
+        // TODO: check Refills products stock at maximum capacity.
+        assert false;
         assertThat(vendingMachineImpl.readBalanceInCentsIndicator(), is(0));
         assertThat(vendingMachineImpl.readSelectedProductIndicator(), is(Optional.empty()));
         assertThat(vendingMachineImpl.collectCoinsAtRepaymentPort(), is(Optional.empty()));
