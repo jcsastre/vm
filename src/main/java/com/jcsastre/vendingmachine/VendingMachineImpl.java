@@ -8,8 +8,8 @@ import java.util.*;
 /**
  * <p>Class implementing the {@link VendingMachine} interface.</p>
  *
- * <p>Is based in {@link CoinsDeposit} to manage the deposited coins, and in
- * {@link ProductsDeposit} to manage the stock of products.</p>
+ * <p>Is based in {@link InventorizedDeposit} to manage the deposited coins and
+ * products.</p>
  *
  * @author Juan Carlos Sastre
  */

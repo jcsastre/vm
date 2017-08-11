@@ -96,6 +96,4 @@ public interface VendingMachine {
      * @return A {@link Product} representing the current selected product or empty.
      */
     Optional<Product> readSelectedProductIndicator();
-
-    public static final int NORMALIZED_COUNT_PER_COIN_TYPE = 5;
 }
