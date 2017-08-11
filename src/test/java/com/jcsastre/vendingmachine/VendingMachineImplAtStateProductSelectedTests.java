@@ -1,16 +1,15 @@
 package com.jcsastre.vendingmachine;
 
-import com.jcsastre.vendingmachine.coinsdeposit.CoinsDeposit;
-import com.jcsastre.vendingmachine.exception.InvalidStateException;
-import com.jcsastre.vendingmachine.exception.NoChangeException;
-import com.jcsastre.vendingmachine.exception.NoStockException;
-import com.jcsastre.vendingmachine.exception.ProductAlreadySelected;
+import com.google.common.collect.ImmutableMap;
+import com.jcsastre.vendingmachine.exception.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.mockito.Spy;
 import org.powermock.reflect.Whitebox;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Optional;
 
@@ -22,11 +21,14 @@ import static org.mockito.Mockito.when;
 
 public class VendingMachineImplAtStateProductSelectedTests {
 
-    @Mock
-    private CoinsDeposit coinsDeposit;
+    @Spy
+    private InventorizedDeposit<Coin> coinsDeposit;
 
     @Mock
-    private ProductsDeposit productsDeposit;
+    private InventorizedDeposit<Product> productsDeposit;
+
+    @Mock
+    private CoinsChangeCalculator coinsChangeCalculator;
 
     @Before
     public void setUp() {
@@ -38,10 +40,11 @@ public class VendingMachineImplAtStateProductSelectedTests {
 
     @Test // 2.1.1
     public void Given_BalanceNotEnough_When_InsertingCoinButNewBalanceIsStillNotEnough_CorrectlyUpdateBalance()
-        throws NoChangeException {
+        throws NoChangeException, NoProductStockException, DepositCoinOverflowException {
 
         // Given: Balance Not Enough
-        final VendingMachineImpl vendingMachineImpl = new VendingMachineImpl(coinsDeposit, productsDeposit);
+        final VendingMachineImpl vendingMachineImpl =
+            new VendingMachineImpl(coinsDeposit, productsDeposit, coinsChangeCalculator);
         Whitebox.setInternalState(vendingMachineImpl,"currentProduct", Product.COKE);
         Whitebox.setInternalState(
             vendingMachineImpl,
@@ -64,16 +67,18 @@ public class VendingMachineImplAtStateProductSelectedTests {
 
     @Test // 2.1.2
     public void Given_BalanceNotEnough_When_InsertingCoinNewBalanceBecomesExactlyTheProductPrice_Then_CorrectlyReleaseProduct()
-        throws NoChangeException {
+        throws NoChangeException, NoProductStockException, DepositCoinOverflowException {
 
         // Given: Balance Not Enough
-        final VendingMachineImpl vendingMachineImpl = new VendingMachineImpl(coinsDeposit, productsDeposit);
+        final VendingMachineImpl vendingMachineImpl =
+            new VendingMachineImpl(coinsDeposit, productsDeposit, coinsChangeCalculator);
         Whitebox.setInternalState(vendingMachineImpl,"currentProduct", Product.COKE);
         Whitebox.setInternalState(
             vendingMachineImpl,
             "currentBalanceInCents",
             Product.COKE.getPriceInCents()-Coin.ONE_EURO.getValueInCents()
         );
+        when(productsDeposit.tryToRelease(Product.COKE)).thenReturn(Optional.of(Product.COKE));
 
         // When: Inserting Coin New Balance Becomes Exactly The ProductPrice
         vendingMachineImpl.insertCoin(Coin.ONE_EURO);
@@ -87,27 +92,23 @@ public class VendingMachineImplAtStateProductSelectedTests {
 
     @Test // 2.1.3
     public void Given_BalanceNotEnough_When_InsertingCoinNewBalanceBecomesGreaterThanProductPriceButNoChange_Then_CorrectlyThrowNoChangeException()
-        throws NoChangeException {
+        throws NoChangeException, NoProductStockException, DepositCoinOverflowException {
 
         // Given: Balance Not Enough
-        final VendingMachineImpl vendingMachineImpl = new VendingMachineImpl(coinsDeposit, productsDeposit);
+        final VendingMachineImpl vendingMachineImpl =
+            new VendingMachineImpl(coinsDeposit, productsDeposit, coinsChangeCalculator);
         Whitebox.setInternalState(vendingMachineImpl,"currentProduct", Product.COKE);
         Whitebox.setInternalState(
             vendingMachineImpl,
             "currentBalanceInCents",
             Coin.FIFTY_CENTS.getValueInCents()
         );
-        when(
-            coinsDeposit.tryToReleaseAmount(
-                Coin.FIFTY_CENTS.getValueInCents()+Coin.TWO_EUROS.getValueInCents()-Product.COKE.getPriceInCents()
-            )
-        )
-            .thenReturn(Optional.empty());
+        when(productsDeposit.tryToRelease(Product.COKE)).thenReturn(Optional.of(Product.COKE));
 
         // When: Inserting Coin New Balance Becomes Greater Than Product Price But No Change
         com.googlecode.catchexception.apis.BDDCatchException.when(vendingMachineImpl).insertCoin(Coin.TWO_EUROS);
 
-        // Then: Correctly Throw NoStockException
+        // Then: Correctly Throw NoProductStockException
         then(caughtException()).isInstanceOf(NoChangeException.class);
         assertThat(
             vendingMachineImpl.readBalanceInCentsIndicator(),
@@ -120,22 +121,22 @@ public class VendingMachineImplAtStateProductSelectedTests {
 
     @Test // 2.1.4
     public void Given_BalanceNotEnough_When_InsertingCoinAndNewBalanceBecomesGreaterThanProductPriceAndChange_Then_CorrectlyReleaseProduct()
-        throws NoChangeException {
+        throws NoChangeException, NoProductStockException, DepositCoinOverflowException {
 
         // Given: Balance Not Enough
-        final VendingMachineImpl vendingMachineImpl = new VendingMachineImpl(coinsDeposit, productsDeposit);
+        final VendingMachineImpl vendingMachineImpl =
+            new VendingMachineImpl(coinsDeposit, productsDeposit, coinsChangeCalculator);
         Whitebox.setInternalState(vendingMachineImpl,"currentProduct", Product.COKE);
         Whitebox.setInternalState(
             vendingMachineImpl,
             "currentBalanceInCents",
             Coin.FIFTY_CENTS.getValueInCents()
         );
-        when(
-            coinsDeposit.tryToReleaseAmount(
-                Coin.FIFTY_CENTS.getValueInCents()+Coin.TWO_EUROS.getValueInCents()-Product.COKE.getPriceInCents()
-            )
-        )
-            .thenReturn(Optional.of(Collections.singletonList(Coin.ONE_EURO)));
+        when(productsDeposit.tryToRelease(Product.COKE)).thenReturn(Optional.of(Product.COKE));
+        when(coinsDeposit.getCountsForAllTypes()).thenReturn(ImmutableMap.of(Coin.ONE_EURO, 1));
+        when(coinsChangeCalculator.calculate(Arrays.asList(Coin.ONE_EURO), 100))
+            .thenReturn(Optional.of(Arrays.asList(Coin.ONE_EURO)));
+        when(coinsDeposit.tryToRelease(Coin.ONE_EURO)).thenReturn(Optional.of(Coin.ONE_EURO));
 
         // When: Inserting Coin And New Balance Becomes Greater Than Product Price And Change
         vendingMachineImpl.insertCoin(Coin.TWO_EUROS);
@@ -151,10 +152,11 @@ public class VendingMachineImplAtStateProductSelectedTests {
 
     @Test // 2.2.1
     public void Given_BalanceNotEnough_When_SelectingAnyProduct_Then_CorrectlyThrowProductAlreadySelected()
-        throws NoChangeException, NoStockException, ProductAlreadySelected {
+        throws NoChangeException, NoProductStockException, ProductAlreadySelected {
 
         // Given: Balance Not Enough
-        final VendingMachineImpl vendingMachineImpl = new VendingMachineImpl(coinsDeposit, productsDeposit);
+        final VendingMachineImpl vendingMachineImpl =
+            new VendingMachineImpl(coinsDeposit, productsDeposit, coinsChangeCalculator);
         Whitebox.setInternalState(vendingMachineImpl,"currentProduct", Product.COKE);
         Whitebox.setInternalState(
             vendingMachineImpl,
@@ -179,7 +181,8 @@ public class VendingMachineImplAtStateProductSelectedTests {
     public void Given_NoBalance_When_Canceling_Then_CorrectlyResetTheCurrentSelectedProduct() throws InvalidStateException {
 
         // Given: No Balance
-        final VendingMachineImpl vendingMachineImpl = new VendingMachineImpl(coinsDeposit, productsDeposit);
+        final VendingMachineImpl vendingMachineImpl =
+            new VendingMachineImpl(coinsDeposit, productsDeposit, coinsChangeCalculator);
         Whitebox.setInternalState(vendingMachineImpl,"currentProduct", Product.COKE);
 
         // When: Canceling
@@ -196,10 +199,14 @@ public class VendingMachineImplAtStateProductSelectedTests {
     public void Given_Balance_When_Canceling_Then_CorrectlyReleaseBalanceAndResetTheCurrentSelectedProduct() throws InvalidStateException {
 
         // Given: Balance
-        final VendingMachineImpl vendingMachineImpl = new VendingMachineImpl(coinsDeposit, productsDeposit);
+        final VendingMachineImpl vendingMachineImpl =
+            new VendingMachineImpl(coinsDeposit, productsDeposit, coinsChangeCalculator);
         Whitebox.setInternalState(vendingMachineImpl,"currentProduct", Product.COKE);
         Whitebox.setInternalState(vendingMachineImpl,"currentBalanceInCents", 50);
-        when(coinsDeposit.tryToReleaseAmount(50)).thenReturn(Optional.of(Collections.singletonList(Coin.FIFTY_CENTS)));
+        when(coinsDeposit.getCountsForAllTypes()).thenReturn(ImmutableMap.of(Coin.FIFTY_CENTS, 1));
+        when(coinsChangeCalculator.calculate(Arrays.asList(Coin.FIFTY_CENTS), 50))
+            .thenReturn(Optional.of(Arrays.asList(Coin.FIFTY_CENTS)));
+        when(coinsDeposit.tryToRelease(Coin.FIFTY_CENTS)).thenReturn(Optional.of(Coin.FIFTY_CENTS));
 
         // When: Canceling
         vendingMachineImpl.cancel();

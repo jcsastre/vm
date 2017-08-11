@@ -1,9 +1,6 @@
 package com.jcsastre.vendingmachine;
 
-import com.jcsastre.vendingmachine.exception.InvalidStateException;
-import com.jcsastre.vendingmachine.exception.NoChangeException;
-import com.jcsastre.vendingmachine.exception.NoStockException;
-import com.jcsastre.vendingmachine.exception.ProductAlreadySelected;
+import com.jcsastre.vendingmachine.exception.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -34,18 +31,18 @@ public interface VendingMachine {
      *         possible to return change with the new balance produced by the
      *         inserted coin.
      */
-    void insertCoin(Coin coin) throws NoChangeException;
+    void insertCoin(Coin coin) throws NoChangeException, NoProductStockException, DepositCoinOverflowException;
 
     /**
      * <p>Command representing a Customer selecting a product.</p>
      *
      * @param product the {@link Product} selected.
-     * @throws NoStockException if no stock available.
+     * @throws NoProductStockException if no stock available.
      * @throws NoChangeException if it is not possible to return change with the
      *         current balance.
      * @throws ProductAlreadySelected if a product is already selected.
      */
-    void selectProduct(Product product) throws NoStockException, NoChangeException, ProductAlreadySelected;
+    void selectProduct(Product product) throws NoProductStockException, NoChangeException, ProductAlreadySelected;
 
     /**
      * <p>Command representing a Customer pressing the cancel button.</p>

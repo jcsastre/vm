@@ -1,9 +1,7 @@
 package com.jcsastre.vendingmachine;
 
-import com.jcsastre.vendingmachine.coinsdeposit.CoinsDeposit;
-import com.jcsastre.vendingmachine.exception.InvalidStateException;
 import com.jcsastre.vendingmachine.exception.NoChangeException;
-import com.jcsastre.vendingmachine.exception.NoStockException;
+import com.jcsastre.vendingmachine.exception.NoProductStockException;
 import com.jcsastre.vendingmachine.exception.ProductAlreadySelected;
 import org.junit.Before;
 import org.junit.Test;
@@ -15,21 +13,22 @@ import org.powermock.reflect.Whitebox;
 
 import java.util.*;
 
-import static com.googlecode.catchexception.apis.BDDCatchException.caughtException;
 import static org.assertj.core.api.BDDAssertions.then;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
-import static org.mockito.Mockito.when;
 
 public class VendingMachineImplResetCommandTests {
 
     @Spy
-    private CoinsDeposit coinsDeposit;
-
-    private List<Coin> expectedListOfCoinsToBeSetOnCoinsDeposit;
+    private InventorizedDeposit<Coin> coinsDeposit;
 
     @Mock
-    private ProductsDeposit productsDeposit;
+    private InventorizedDeposit<Product> productsDeposit;
+
+    @Mock
+    private CoinsChangeCalculator coinsChangeCalculator;
+
+    private List<Coin> expectedListOfCoinsToBeSetOnCoinsDeposit;
 
     @Before
     public void setUp() {
@@ -46,10 +45,11 @@ public class VendingMachineImplResetCommandTests {
     }
 
     @Test
-    public void shouldCorrectlyReset() throws NoStockException, ProductAlreadySelected, NoChangeException {
+    public void shouldCorrectlyReset() throws NoProductStockException, ProductAlreadySelected, NoChangeException {
 
         // Given
-        final VendingMachineImpl vendingMachineImpl = new VendingMachineImpl(coinsDeposit, productsDeposit);
+        final VendingMachineImpl vendingMachineImpl =
+            new VendingMachineImpl(coinsDeposit, productsDeposit, coinsChangeCalculator);
         Whitebox.setInternalState(vendingMachineImpl, "currentBalanceInCents", 100);
         Whitebox.setInternalState(vendingMachineImpl, "currentProduct", Product.SPRITE);
 
@@ -57,9 +57,8 @@ public class VendingMachineImplResetCommandTests {
         vendingMachineImpl.reset();
 
         // Then
-        Mockito.verify(coinsDeposit).setCoins(expectedListOfCoinsToBeSetOnCoinsDeposit);
-        // TODO: check Refills products stock at maximum capacity.
-        assert false;
+        Mockito.verify(coinsDeposit).nomalizeToHalfCapacityForEachType();
+        Mockito.verify(productsDeposit).normalizeToMaxCapacityForEachType();
         assertThat(vendingMachineImpl.readBalanceInCentsIndicator(), is(0));
         assertThat(vendingMachineImpl.readSelectedProductIndicator(), is(Optional.empty()));
         assertThat(vendingMachineImpl.collectCoinsAtRepaymentPort(), is(Optional.empty()));

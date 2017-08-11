@@ -1,6 +1,4 @@
-package com.jcsastre.vendingmachine.coinsdeposit;
-
-import com.jcsastre.vendingmachine.Coin;
+package com.jcsastre.vendingmachine;
 
 import java.util.ArrayList;
 import java.util.Comparator;

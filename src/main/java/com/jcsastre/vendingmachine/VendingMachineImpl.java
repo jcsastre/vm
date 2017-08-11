@@ -1,10 +1,7 @@
 package com.jcsastre.vendingmachine;
 
-import com.jcsastre.vendingmachine.coinsdeposit.CoinsDeposit;
-import com.jcsastre.vendingmachine.exception.InvalidStateException;
-import com.jcsastre.vendingmachine.exception.NoChangeException;
-import com.jcsastre.vendingmachine.exception.NoStockException;
-import com.jcsastre.vendingmachine.exception.ProductAlreadySelected;
+import com.jcsastre.vendingmachine.exception.TypeLimitExceededException;
+import com.jcsastre.vendingmachine.exception.*;
 
 import java.util.*;
 
@@ -18,8 +15,9 @@ import java.util.*;
  */
 public class VendingMachineImpl implements VendingMachine {
 
-    private CoinsDeposit coinsDeposit;
-    private ProductsDeposit productsDeposit;
+    private InventorizedDeposit<Coin> coinsDeposit;
+    private InventorizedDeposit<Product> productsDeposit;
+    private CoinsChangeCalculator coinsChangeCalculator;
 
     private Product currentProduct;
     private int currentBalanceInCents;
@@ -30,21 +28,27 @@ public class VendingMachineImpl implements VendingMachine {
     private List<Coin> coinsAtRepaymentPort;
 
     public VendingMachineImpl(
-        CoinsDeposit coinsDeposit,
-        ProductsDeposit productsDeposit
+        InventorizedDeposit<Coin> coinsDeposit,
+        InventorizedDeposit<Product> productsDeposit,
+        CoinsChangeCalculator coinsChangeCalculator
     )  {
 
         this.coinsDeposit = coinsDeposit;
         this.productsDeposit = productsDeposit;
+        this.coinsChangeCalculator = coinsChangeCalculator;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void insertCoin(Coin coin) throws NoChangeException {
+    public void insertCoin(Coin coin) throws NoChangeException, NoProductStockException, DepositCoinOverflowException {
 
-        coinsDeposit.insertCoin(coin);
+        try {
+            coinsDeposit.insert(coin, 1);
+        } catch (TypeLimitExceededException e) {
+            throw new DepositCoinOverflowException();
+        }
 
         currentBalanceInCents += coin.getValueInCents();
 
@@ -71,12 +75,12 @@ public class VendingMachineImpl implements VendingMachine {
      * {@inheritDoc}
      */
     @Override
-    public void selectProduct(Product product) throws NoStockException, NoChangeException, ProductAlreadySelected {
+    public void selectProduct(Product product) throws NoProductStockException, NoChangeException, ProductAlreadySelected {
 
         if (currentProduct != null)
             throw new ProductAlreadySelected();
 
-        if (productsDeposit.checkThereIsProductStock(product)) {
+        if (productsDeposit.hasType(product)) {
 
             currentProduct = product;
 
@@ -84,7 +88,7 @@ public class VendingMachineImpl implements VendingMachine {
                 tryToReleaseProductAndReturnChangeIfRequired();
             }
         } else {
-            throw new NoStockException();
+            throw new NoProductStockException();
         }
     }
 
@@ -96,7 +100,7 @@ public class VendingMachineImpl implements VendingMachine {
 
         if (currentBalanceInCents > 0) {
 
-            final Optional<List<Coin>> optChange = coinsDeposit.tryToReleaseAmount(currentBalanceInCents);
+            final Optional<List<Coin>> optChange = tryToReleaseAmount(currentBalanceInCents);
             if (!optChange.isPresent()) {
                 throw new InvalidStateException();
             }
@@ -115,20 +119,12 @@ public class VendingMachineImpl implements VendingMachine {
     @Override
     public void reset() {
 
-        //TODO: Improve
-        List<Coin> listOfCoinsToBeSetOnCoinsDeposit = new ArrayList<>();
-        Arrays.stream(Coin.values())
-            .forEach((Coin coin) -> {
-                for (int i=0; i<VendingMachine.NORMALIZED_COUNT_PER_COIN_TYPE; i++) {
-                    listOfCoinsToBeSetOnCoinsDeposit.add(coin);
-                }
-            });
-        coinsDeposit.setCoins(listOfCoinsToBeSetOnCoinsDeposit);
-
-        // TODO: Refills products stock at maximum capacity.
+        coinsDeposit.nomalizeToHalfCapacityForEachType();
+        productsDeposit.normalizeToMaxCapacityForEachType();
 
         currentBalanceInCents = 0;
         currentProduct = null;
+
         coinsAtRepaymentPort = null;
         productAtTakeoutPort = null;
     }
@@ -183,7 +179,11 @@ public class VendingMachineImpl implements VendingMachine {
             Optional.ofNullable(currentProduct);
     }
 
-    private void tryToReleaseProductAndReturnChangeIfRequired() throws NoChangeException {
+    private void tryToReleaseProductAndReturnChangeIfRequired() throws NoChangeException, NoProductStockException {
+
+        final Optional<Product> optProduct = productsDeposit.tryToRelease(currentProduct);
+        if (!optProduct.isPresent())
+            throw new NoProductStockException();
 
         Integer amountToReturnInCents = currentBalanceInCents - currentProduct.getPriceInCents();
         if (amountToReturnInCents == 0) {
@@ -194,15 +194,47 @@ public class VendingMachineImpl implements VendingMachine {
 
         } else if (amountToReturnInCents > 0) {
 
-            final Optional<List<Coin>> optChange = coinsDeposit.tryToReleaseAmount(amountToReturnInCents);
-            if (!optChange.isPresent()) {
+            final Optional<List<Coin>> optChange = tryToReleaseAmount(amountToReturnInCents);
+            if (!optChange.isPresent())
                 throw new NoChangeException();
-            }
 
             coinsAtRepaymentPort = optChange.get();
             productAtTakeoutPort = currentProduct;
             currentBalanceInCents = 0;
             currentProduct = null;
         }
+    }
+
+    private Optional<List<Coin>> tryToReleaseAmount(Integer amountToProvideInCents) {
+
+        // TODO: try using a declarative approach to see if readability is improved
+
+        List<Coin> availableCoins = new ArrayList<>();
+        final Map<Coin, Integer> countsByCoin = coinsDeposit.getCountsForAllTypes();
+        for (Map.Entry<Coin, Integer> coinIntegerEntry : countsByCoin.entrySet()) {
+            final Coin coin = coinIntegerEntry.getKey();
+            final Integer count = coinIntegerEntry.getValue();
+            for (int i=0; i<count; i++) {
+                availableCoins.add(coin);
+            }
+        }
+
+        final Optional<List<Coin>> optChange =
+            coinsChangeCalculator.calculate(
+                availableCoins,
+                amountToProvideInCents
+            );
+
+        if (optChange.isPresent()) {
+            final List<Coin> coinsRequiredForChange = optChange.get();
+            for (Coin coin : coinsRequiredForChange) {
+                final Optional<Coin> optReleasedCoin = coinsDeposit.tryToRelease(coin);
+                if (!optReleasedCoin.isPresent())
+                    return Optional.empty();
+            }
+            return Optional.of(coinsRequiredForChange);
+        }
+
+        return Optional.empty();
     }
 }
