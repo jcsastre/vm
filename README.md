@@ -1,4 +1,4 @@
-# Guía para revisar el test
+# Guía para revisar el test técnico
 
 * Empezar por [VendingMachine.java](vm/src/main/java/com/jcsastre/vendingmachine/VendingMachine.java)
 que es la interfaz que define el contrato que debe cumplir cualquiera de sus implementaciones.
@@ -17,3 +17,11 @@ el comportamiento esperado por parte de [VendingMachineImpl.java](https://github
 
 * La sección [Issues](https://github.com/jcsastre/vm/issues) de este repositorio GitHub contiene
 cosas pendientes de implementar o mejorar.
+
+* Si os fijáis en el [historial de commits](https://github.com/jcsastre/vm/commits/master),
+he seguido un enfoque test fails first, y luego implementar código hasta que los test
+pasen correctamente.
+
+* Si en algún momento he hecho alguna refactorización, los tests me han sido de utiliadad
+para comprobar el progreso de la refactorización. Lógicamente cuando la refactorización
+afecta a muy alto nivel, los tests deben ser refactorizados correctamente.
