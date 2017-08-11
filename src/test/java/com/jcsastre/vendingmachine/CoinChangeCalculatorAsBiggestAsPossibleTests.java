@@ -1,4 +1,4 @@
-package com.jcsastre.vendingmachine.coinsdeposit;
+package com.jcsastre.vendingmachine;
 
 import com.jcsastre.vendingmachine.Coin;
 import com.jcsastre.vendingmachine.CoinsChangeCalculator;

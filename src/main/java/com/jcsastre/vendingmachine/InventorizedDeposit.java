@@ -5,6 +5,7 @@ import com.jcsastre.vendingmachine.exception.TypeLimitExceededException;
 import java.util.Map;
 import java.util.Optional;
 
+//TODO: javadoc
 public interface InventorizedDeposit<T> {
 
     void insert(

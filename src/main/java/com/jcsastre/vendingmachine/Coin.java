@@ -1,8 +1,5 @@
 package com.jcsastre.vendingmachine;
 
-/**
- * @author: Juan Carlos Sastre
- */
 public enum Coin {
 
     FIVE_CENTS (5),

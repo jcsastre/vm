@@ -207,7 +207,7 @@ public class VendingMachineImpl implements VendingMachine {
 
     private Optional<List<Coin>> tryToReleaseAmount(Integer amountToProvideInCents) {
 
-        // TODO: try using a declarative approach to see if readability is improved
+        // TODO: Try using a declarative approach to see if readability is improved
 
         List<Coin> availableCoins = new ArrayList<>();
         final Map<Coin, Integer> countsByCoin = coinsDeposit.getCountsForAllTypes();
