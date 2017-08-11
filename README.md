@@ -21,6 +21,15 @@ o el operador).
   * [VendingMachineImplResetCommandTests.java](https://github.com/jcsastre/vm/blob/master/src/test/java/com/jcsastre/vendingmachine/VendingMachineImplResetCommandTests.java):
   Permite entender el comportamiento esperado de [VendingMachineImpl.java](https://github.com/jcsastre/vm/blob/master/src/main/java/com/jcsastre/vendingmachine/VendingMachineImpl.java)
   para el command reset.
+  * [CoinChangeCalculatorAsBiggestAsPossibleTests.java](https://github.com/jcsastre/vm/blob/master/src/test/java/com/jcsastre/vendingmachine/CoinChangeCalculatorAsBiggestAsPossibleTests.java):
+  Testea una implementación de la interfaz funcional [CoinsChangeCalculator.java](https://github.com/jcsastre/vm/blob/master/src/main/java/com/jcsastre/vendingmachine/CoinsChangeCalculator.java)
+  que permite inyectar como dependencia en [VendingMachineImpl.java](https://github.com/jcsastre/vm/blob/master/src/main/java/com/jcsastre/vendingmachine/VendingMachineImpl.java)
+  la lógica responsable de calcular el cambio en monedas.
+  * [InventorizedDepositImplTests.java](https://github.com/jcsastre/vm/blob/master/src/test/java/com/jcsastre/vendingmachine/InventorizedDepositImplTests.java):
+  Permite entender el comportamiento esperado para la clase genérica [InventorizedDepositImpl.java](https://github.com/jcsastre/vm/blob/master/src/main/java/com/jcsastre/vendingmachine/InventorizedDepositImpl.java)
+  que es inyectada en [VendingMachineImpl.java](https://github.com/jcsastre/vm/blob/master/src/main/java/com/jcsastre/vendingmachine/VendingMachineImpl.java)
+  tanto para el depósito de monedas, como para el depósito de productos.
+  
 
 * La sección [Issues](https://github.com/jcsastre/vm/issues) de este repositorio GitHub contiene
 cosas pendientes de implementar o mejorar.
