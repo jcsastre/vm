@@ -1,6 +1,6 @@
 # Guía para revisar el test técnico
 
-* Empezar por [VendingMachine.java](vm/src/main/java/com/jcsastre/vendingmachine/VendingMachine.java)
+* Empezar por [VendingMachine.java](https://github.com/jcsastre/vm/src/main/java/com/jcsastre/vendingmachine/VendingMachine.java)
 que es la interfaz que define el contrato que debe cumplir cualquier clase que pretendar implementar el
 modelo de vending machine que he diseñado.
 
@@ -12,13 +12,13 @@ no es thread-safe porque asumo que solo hay una persona usando la vending machin
 o el operador).
 
 * Examinar los tests:
-  * [VendingMachineImplAtStateProductNotSelectedTests.java](vm/src/test/java/com/jcsastre/vendingmachine/VendingMachineImplAtStateProductNotSelectedTests.java):
+  * [VendingMachineImplAtStateProductNotSelectedTests.java](https://github.com/jcsastre/vm/src/test/java/com/jcsastre/vendingmachine/VendingMachineImplAtStateProductNotSelectedTests.java):
   Permite entender el comportamiento esperado de [VendingMachineImpl.java](https://github.com/jcsastre/vm/blob/master/src/main/java/com/jcsastre/vendingmachine/VendingMachineImpl.java) 
   en el estado de producto no seleccionado.
-  * [VendingMachineImplAtStateProductSelectedTests.java](vm/src/test/java/com/jcsastre/vendingmachine/VendingMachineImplAtStateProductSelectedTests.java)
+  * [VendingMachineImplAtStateProductSelectedTests.java](https://github.com/jcsastre/vm/src/test/java/com/jcsastre/vendingmachine/VendingMachineImplAtStateProductSelectedTests.java)
   Permite entender el comportamiento esperado de [VendingMachineImpl.java](https://github.com/jcsastre/vm/blob/master/src/main/java/com/jcsastre/vendingmachine/VendingMachineImpl.java)
   en el estado de producto seleccionado.
-  * [VendingMachineImplResetCommandTests.java](vm/src/test/java/com/jcsastre/vendingmachine/VendingMachineImplResetCommandTests.java),
+  * [VendingMachineImplResetCommandTests.java](https://github.com/jcsastre/vm/src/test/java/com/jcsastre/vendingmachine/VendingMachineImplResetCommandTests.java),
   Permite entender el comportamiento esperado de [VendingMachineImpl.java](https://github.com/jcsastre/vm/blob/master/src/main/java/com/jcsastre/vendingmachine/VendingMachineImpl.java)
   para el command reset.
 
