@@ -9,6 +9,8 @@ import java.util.Optional;
  * <p>Interface representing a deposit of coins.</p>
  *
  * <p>That deposit has no limit capacity.</p>
+ *
+ * @author Juan Carlos Sastre
  */
 public interface CoinsDeposit {
 
@@ -28,9 +30,9 @@ public interface CoinsDeposit {
     Optional<List<Coin>> tryToReleaseAmount(Integer amountToProvideInCents);
 
     /**
-     * <p>Sets the deposited coins replacing the previous ones.</p>
+     * <p>Replaces the current deposited coins.</p>
      *
-     * @param coins The list of coins being the new current state of deposited coins.
+     * @param coins The list of coins being the new deposited coins.
      */
     void setCoins(List<Coin> coins);
 }

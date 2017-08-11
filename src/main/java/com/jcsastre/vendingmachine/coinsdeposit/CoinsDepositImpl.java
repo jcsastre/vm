@@ -6,6 +6,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * <p>Class implementing {@link CoinsDeposit}.</p>
+ *
+ * <p>Uses a {@code List} to manage the state of deposited coins.</p>
+ *
+ * @author Juan Carlos Sastre
+ */
 public class CoinsDepositImpl implements CoinsDeposit {
 
     private List<Coin> coins = new ArrayList<>();
@@ -16,12 +23,18 @@ public class CoinsDepositImpl implements CoinsDeposit {
         this.coinsChangeCalculator = coinsChangeCalculator;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void insertCoin(Coin coin) {
 
         coins.add(coin);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Optional<List<Coin>> tryToReleaseAmount(Integer amountToProvideInCents) {
 
@@ -40,6 +53,9 @@ public class CoinsDepositImpl implements CoinsDeposit {
         return Optional.empty();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setCoins(List<Coin> coins) {
 
