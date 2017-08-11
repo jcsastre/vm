@@ -1,7 +1,5 @@
 package com.jcsastre.vendingmachine;
 
-import com.jcsastre.vendingmachine.Coin;
-import com.jcsastre.vendingmachine.CoinsChangeCalculator;
 import org.junit.Before;
 import org.junit.Test;
 
