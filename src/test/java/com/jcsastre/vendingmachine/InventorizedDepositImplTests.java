@@ -8,6 +8,7 @@ import org.powermock.reflect.Whitebox;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import static com.googlecode.catchexception.apis.BDDCatchException.caughtException;
 import static org.assertj.core.api.BDDAssertions.then;
@@ -100,13 +101,34 @@ public class InventorizedDepositImplTests {
     }
 
     @Test
-    public void shouldReturnEmptyWhenTryingToReleaseATypeThatDoesNotHave() {
-        assert false;
+    public void tryToRelease_shouldReturnEmptyWhenTryingToReleaseATypeThatDoesNotHave() {
+
+        // Given:
+        final InventorizedDepositImpl<Coin> inventorizedDepositImpl =
+            new InventorizedDepositImpl<>(5);
+        Whitebox.setInternalState(inventorizedDepositImpl, "countByType", countByCoin);
+
+        // When
+        final Optional<Coin> optCoin = inventorizedDepositImpl.tryToRelease(Coin.TWO_EUROS);
+
+        // Then
+        assertThat(optCoin, is(Optional.empty()));
     }
 
     @Test
-    public void shouldReturnTypeWhenTryingToReleaseAType() {
-        assert false;
+    public void tryToRelease_shouldReleaseATypeWhenTryingToReleaseATypeThatHas() {
+
+        // Given:
+        final InventorizedDepositImpl<Coin> inventorizedDepositImpl =
+            new InventorizedDepositImpl<>(5);
+        Whitebox.setInternalState(inventorizedDepositImpl, "countByType", countByCoin);
+
+        // When
+        final Optional<Coin> optCoin = inventorizedDepositImpl.tryToRelease(Coin.ONE_EURO);
+
+        // Then
+        assertThat(optCoin, is(Optional.of(Coin.ONE_EURO)));
+        assertThat(inventorizedDepositImpl.getCountByType(Coin.ONE_EURO), is(0));
     }
 
     @Test

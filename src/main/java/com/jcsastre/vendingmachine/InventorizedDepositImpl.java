@@ -41,8 +41,14 @@ public class InventorizedDepositImpl<T> implements InventorizedDeposit<T> {
     @Override
     public Optional<T> tryToRelease(T type) {
 
-        //TODO
-        return null;
+        final Integer currentCount = getCountByType(type);
+
+        if (currentCount > 0) {
+            countByType.put(type, currentCount - 1);
+            return Optional.of(type);
+        }
+
+        return Optional.empty();
     }
 
     @Override
