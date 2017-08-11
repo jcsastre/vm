@@ -75,14 +75,4 @@ public class InventorizedDepositImpl<T> implements InventorizedDeposit<T> {
 
         return this.maxCapacityPerEachType;
     }
-
-    @Override
-    public void normalizeToMaxCapacityForEachType() {
-        //TODO
-    }
-
-    @Override
-    public void nomalizeToHalfCapacityForEachType() {
-        //TODO
-    }
 }

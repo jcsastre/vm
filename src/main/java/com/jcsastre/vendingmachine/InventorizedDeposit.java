@@ -24,8 +24,4 @@ public interface InventorizedDeposit<T> {
     Map<T, Integer> getCountsForAllTypes();
 
     Integer getMaxCapacityPerEachType();
-
-    void normalizeToMaxCapacityForEachType();
-
-    void nomalizeToHalfCapacityForEachType();
 }

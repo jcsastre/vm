@@ -103,6 +103,8 @@ public class InventorizedDepositImplTests {
     @Test
     public void tryToRelease_shouldReturnEmptyWhenTryingToReleaseATypeThatDoesNotHave() {
 
+        //TODO independize of getCountByType behaviour
+
         // Given:
         final InventorizedDepositImpl<Coin> inventorizedDepositImpl =
             new InventorizedDepositImpl<>(5);
@@ -118,6 +120,8 @@ public class InventorizedDepositImplTests {
     @Test
     public void tryToRelease_shouldReleaseATypeWhenTryingToReleaseATypeThatHas() {
 
+        //TODO independize of getCountByType behaviour
+
         // Given:
         final InventorizedDepositImpl<Coin> inventorizedDepositImpl =
             new InventorizedDepositImpl<>(5);
@@ -132,34 +136,66 @@ public class InventorizedDepositImplTests {
     }
 
     @Test
-    public void shouldEmptyAllTypes() {
-        assert false;
+    public void empty_shouldEmptyAllTypes() {
+
+        // Given:
+        final InventorizedDepositImpl<Coin> inventorizedDepositImpl =
+            new InventorizedDepositImpl<>(5);
+        Whitebox.setInternalState(inventorizedDepositImpl, "countByType", countByCoin);
+
+        // When
+        inventorizedDepositImpl.empty();
+
+        // Then
+        assertThat(inventorizedDepositImpl.getCountByType(Coin.ONE_EURO), is(0));
+        assertThat(inventorizedDepositImpl.getCountByType(Coin.FIFTY_CENTS), is(0));
     }
 
     @Test
-    public void shouldReturnCountOfAType() {
-        assert false;
+    public void getCountByType_shouldReturnCountOfAType() {
+
+        // Given:
+        final InventorizedDepositImpl<Coin> inventorizedDepositImpl =
+            new InventorizedDepositImpl<>(5);
+        Whitebox.setInternalState(inventorizedDepositImpl, "countByType", countByCoin);
+
+        // When
+        final Integer countOneEuro = inventorizedDepositImpl.getCountByType(Coin.ONE_EURO);
+        final Integer countFiftyCents = inventorizedDepositImpl.getCountByType(Coin.FIFTY_CENTS);
+        final Integer countTwoEuros = inventorizedDepositImpl.getCountByType(Coin.TWO_EUROS);
+
+        // Then
+        assertThat(countOneEuro, is(1));
+        assertThat(countFiftyCents, is(2));
+        assertThat(countTwoEuros, is(0));
     }
 
     @Test
-    public void shouldReturnTheCountOfAllTypes() {
-        assert false;
+    public void getCountsForAllTypes_shouldReturnTheCountOfAllTypes() {
+
+        // Given:
+        final InventorizedDepositImpl<Coin> inventorizedDepositImpl =
+            new InventorizedDepositImpl<>(5);
+        Whitebox.setInternalState(inventorizedDepositImpl, "countByType", countByCoin);
+
+        // When
+        final Map<Coin, Integer> countsForAllTypes = inventorizedDepositImpl.getCountsForAllTypes();
+
+        // Then
+        assertThat(countsForAllTypes, is(countByCoin));
     }
 
     @Test
-    public void shouldReturnTheMaxCapacityPerEachType() {
+    public void getMaxCapacityPerEachType_shouldReturnTheMaxCapacityPerEachType() {
 
-        //When
-        assert false;
-    }
+        // Given:
+        final InventorizedDepositImpl<Coin> inventorizedDepositImpl =
+            new InventorizedDepositImpl<>(5);
 
-    @Test
-    public void shouldNormalizeToMaxCapacityForEachType() {
-        assert false;
-    }
+        // When
+        final Integer maxCapacityPerEachType = inventorizedDepositImpl.getMaxCapacityPerEachType();
 
-    @Test
-    public void shouldNomalizeToHalfCapacityForEachType() {
-        assert false;
+        // Then
+        assertThat(maxCapacityPerEachType, is(5));
     }
 }

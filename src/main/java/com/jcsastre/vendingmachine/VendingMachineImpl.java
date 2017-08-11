@@ -8,8 +8,8 @@ import java.util.*;
 /**
  * <p>Class implementing the {@link VendingMachine} interface.</p>
  *
- * <p>Is based in {@link CoinsDeposit} to manage the deposited coins, and in
- * {@link ProductsDeposit} to manage the stock of products.</p>
+ * <p>Is based in {@link InventorizedDeposit} to manage the deposited coins and
+ * products.</p>
  *
  * @author Juan Carlos Sastre
  */
@@ -117,10 +117,30 @@ public class VendingMachineImpl implements VendingMachine {
      * {@inheritDoc}
      */
     @Override
-    public void reset() {
+    public void reset() throws InvalidStateException {
 
-        coinsDeposit.nomalizeToHalfCapacityForEachType();
-        productsDeposit.normalizeToMaxCapacityForEachType();
+        // For each coin type, normalize to half the max capacity
+        coinsDeposit.empty();
+        final Integer maxCapacityPerEachCoinType = coinsDeposit.getMaxCapacityPerEachType();
+        final int halfCapacityPerEachCoinType = maxCapacityPerEachCoinType / 2;
+        for (Coin coin : Coin.values()) {
+            try {
+                coinsDeposit.insert(coin, halfCapacityPerEachCoinType);
+            } catch (TypeLimitExceededException e) {
+                throw new InvalidStateException();
+            }
+        }
+
+        // For each product type, normalize to half the max capacity
+        productsDeposit.empty();
+        final Integer maxCapacityPerEachProductType = productsDeposit.getMaxCapacityPerEachType();
+        for (Product product : Product.values()) {
+            try {
+                productsDeposit.insert(product, maxCapacityPerEachProductType);
+            } catch (TypeLimitExceededException e) {
+                throw new InvalidStateException();
+            }
+        }
 
         currentBalanceInCents = 0;
         currentProduct = null;

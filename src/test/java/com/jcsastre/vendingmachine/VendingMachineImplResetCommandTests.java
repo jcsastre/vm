@@ -57,7 +57,7 @@ public class VendingMachineImplResetCommandTests {
         vendingMachineImpl.reset();
 
         // Then
-        Mockito.verify(coinsDeposit).nomalizeToHalfCapacityForEachType();
+        Mockito.verify(coinsDeposit).normalizeToHalfCapacityForEachType();
         Mockito.verify(productsDeposit).normalizeToMaxCapacityForEachType();
         assertThat(vendingMachineImpl.readBalanceInCentsIndicator(), is(0));
         assertThat(vendingMachineImpl.readSelectedProductIndicator(), is(Optional.empty()));

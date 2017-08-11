@@ -66,7 +66,7 @@ public interface VendingMachine {
      *     <li>Removes any coin of the repayment port.</li>
      * </ul>
      */
-    void reset();
+    void reset() throws InvalidStateException;
 
     /**
      * <p>Command representing a Customer opening the takeout port to collect a {@link Product}</p>
