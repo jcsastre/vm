@@ -16,7 +16,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.mockito.Mockito.when;
 
-public class VendingMachineImplResetCommandTests {
+public class VendingMachineImplResetCommandTest {
 
     @Mock
     private InventorizedDeposit<Coin> coinsDeposit;

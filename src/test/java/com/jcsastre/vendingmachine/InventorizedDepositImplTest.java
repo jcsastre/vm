@@ -15,7 +15,7 @@ import static org.assertj.core.api.BDDAssertions.then;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
-public class InventorizedDepositImplTests {
+public class InventorizedDepositImplTest {
 
     private Map<Coin, Integer> countByCoin;
 

@@ -24,7 +24,7 @@ import static org.mockito.Mockito.when;
  *
  * @author Juan Carlos Sastre
  */
-public class VendingMachineImplAtStateProductNotSelectedTests {
+public class VendingMachineImplAtStateProductNotSelectedTest {
 
     @Mock
     private InventorizedDeposit<Coin> coinsDeposit;

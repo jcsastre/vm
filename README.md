@@ -8,24 +8,24 @@ modelo de vending machine que he diseñado.
 es una implementación de [VendingMachine.java](vm/src/main/java/com/jcsastre/vendingmachine/VendingMachine.java).
 
 * [VendingMachineImpl.java](https://github.com/jcsastre/vm/blob/master/src/main/java/com/jcsastre/vendingmachine/VendingMachineImpl.java)
-no es thread-safe porque asumo que solo hay una persona usando la vending machine (ya sea un cliente
-o el operador).
+no es thread-safe porque asumo que solo hay una persona usando la vending machine (ya sea un cliente o
+el operador).
 
 * Examinar los tests:
-  * [VendingMachineImplAtStateProductNotSelectedTests.java](https://github.com/jcsastre/vm/blob/master/src/test/java/com/jcsastre/vendingmachine/VendingMachineImplAtStateProductNotSelectedTests.java):
+  * [VendingMachineImplAtStateProductNotSelectedTest.java](https://github.com/jcsastre/vm/blob/master/src/test/java/com/jcsastre/vendingmachine/VendingMachineImplAtStateProductNotSelectedTest.java):
   Permite entender el comportamiento esperado de [VendingMachineImpl.java](https://github.com/jcsastre/vm/blob/master/src/main/java/com/jcsastre/vendingmachine/VendingMachineImpl.java) 
   en el estado de producto no seleccionado.
-  * [VendingMachineImplAtStateProductSelectedTests.java](https://github.com/jcsastre/vm/blob/master/src/test/java/com/jcsastre/vendingmachine/VendingMachineImplAtStateProductSelectedTests.java):
+  * [VendingMachineImplAtStateProductSelectedTest.java](https://github.com/jcsastre/vm/blob/master/src/test/java/com/jcsastre/vendingmachine/VendingMachineImplAtStateProductSelectedTest.java):
   Permite entender el comportamiento esperado de [VendingMachineImpl.java](https://github.com/jcsastre/vm/blob/master/src/main/java/com/jcsastre/vendingmachine/VendingMachineImpl.java)
   en el estado de producto seleccionado.
-  * [VendingMachineImplResetCommandTests.java](https://github.com/jcsastre/vm/blob/master/src/test/java/com/jcsastre/vendingmachine/VendingMachineImplResetCommandTests.java):
+  * [VendingMachineImplResetCommandTest.java](https://github.com/jcsastre/vm/blob/master/src/test/java/com/jcsastre/vendingmachine/VendingMachineImplResetCommandTest.java):
   Permite entender el comportamiento esperado de [VendingMachineImpl.java](https://github.com/jcsastre/vm/blob/master/src/main/java/com/jcsastre/vendingmachine/VendingMachineImpl.java)
   para el command reset.
-  * [CoinChangeCalculatorAsBiggestAsPossibleTests.java](https://github.com/jcsastre/vm/blob/master/src/test/java/com/jcsastre/vendingmachine/CoinChangeCalculatorAsBiggestAsPossibleTests.java):
+  * [CoinChangeCalculatorAsBiggestAsPossibleTest.java](https://github.com/jcsastre/vm/blob/master/src/test/java/com/jcsastre/vendingmachine/CoinChangeCalculatorAsBiggestAsPossibleTest.java):
   Testea una implementación de la interfaz funcional [CoinsChangeCalculator.java](https://github.com/jcsastre/vm/blob/master/src/main/java/com/jcsastre/vendingmachine/CoinsChangeCalculator.java)
   que permite inyectar como dependencia en [VendingMachineImpl.java](https://github.com/jcsastre/vm/blob/master/src/main/java/com/jcsastre/vendingmachine/VendingMachineImpl.java)
   la lógica responsable de calcular el cambio en monedas.
-  * [InventorizedDepositImplTests.java](https://github.com/jcsastre/vm/blob/master/src/test/java/com/jcsastre/vendingmachine/InventorizedDepositImplTests.java):
+  * [InventorizedDepositImplTest.java](https://github.com/jcsastre/vm/blob/master/src/test/java/com/jcsastre/vendingmachine/InventorizedDepositImplTest.java):
   Permite entender el comportamiento esperado para la clase genérica [InventorizedDepositImpl.java](https://github.com/jcsastre/vm/blob/master/src/main/java/com/jcsastre/vendingmachine/InventorizedDepositImpl.java)
   que es inyectada en [VendingMachineImpl.java](https://github.com/jcsastre/vm/blob/master/src/main/java/com/jcsastre/vendingmachine/VendingMachineImpl.java)
   tanto para el depósito de monedas, como para el depósito de productos.

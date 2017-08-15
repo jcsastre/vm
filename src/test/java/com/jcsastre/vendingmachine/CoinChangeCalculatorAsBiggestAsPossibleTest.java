@@ -11,7 +11,7 @@ import java.util.Optional;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
-public class CoinChangeCalculatorAsBiggestAsPossibleTests {
+public class CoinChangeCalculatorAsBiggestAsPossibleTest {
 
     private ArrayList<Coin> availableCoins;
 
