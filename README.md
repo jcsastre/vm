@@ -8,8 +8,8 @@ modelo de vending machine que he diseñado.
 es una implementación de [VendingMachine.java](vm/src/main/java/com/jcsastre/vendingmachine/VendingMachine.java).
 
 * [VendingMachineImpl.java](https://github.com/jcsastre/vm/blob/master/src/main/java/com/jcsastre/vendingmachine/VendingMachineImpl.java)
-no es thread-safe porque asumo que solo hay una persona usando la vending machine (ya sea un cliente o
-el operador).
+no es thread-safe porque asumo que solo hay una persona usando la vending machine (ya sea un cliente
+o el operador).
 
 * Examinar los tests:
   * [VendingMachineImplAtStateProductNotSelectedTest.java](https://github.com/jcsastre/vm/blob/master/src/test/java/com/jcsastre/vendingmachine/VendingMachineImplAtStateProductNotSelectedTest.java):
@@ -24,7 +24,7 @@ el operador).
   * [CoinChangeCalculatorAsBiggestAsPossibleTest.java](https://github.com/jcsastre/vm/blob/master/src/test/java/com/jcsastre/vendingmachine/CoinChangeCalculatorAsBiggestAsPossibleTest.java):
   Testea una implementación de la interfaz funcional [CoinsChangeCalculator.java](https://github.com/jcsastre/vm/blob/master/src/main/java/com/jcsastre/vendingmachine/CoinsChangeCalculator.java)
   que permite inyectar como dependencia en [VendingMachineImpl.java](https://github.com/jcsastre/vm/blob/master/src/main/java/com/jcsastre/vendingmachine/VendingMachineImpl.java)
-  la lógica responsable de calcular el cambio en monedas.
+  la lógica responsable de calcular el cambio en monedas. (Probably is better to inject into deposit coins, see [Issue 12](https://github.com/jcsastre/vm/issues/12)).
   * [InventorizedDepositImplTest.java](https://github.com/jcsastre/vm/blob/master/src/test/java/com/jcsastre/vendingmachine/InventorizedDepositImplTest.java):
   Permite entender el comportamiento esperado para la clase genérica [InventorizedDepositImpl.java](https://github.com/jcsastre/vm/blob/master/src/main/java/com/jcsastre/vendingmachine/InventorizedDepositImpl.java)
   que es inyectada en [VendingMachineImpl.java](https://github.com/jcsastre/vm/blob/master/src/main/java/com/jcsastre/vendingmachine/VendingMachineImpl.java)
