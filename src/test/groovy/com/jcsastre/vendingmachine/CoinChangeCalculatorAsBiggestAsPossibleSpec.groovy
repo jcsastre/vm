@@ -17,8 +17,11 @@ class CoinChangeCalculatorAsBiggestAsPossibleSpec extends Specification {
 
         where: "amount in cents is"
 
-        amountInCents                                                         || change
-        Coin.TWO_EUROS.getValueInCents() + Coin.FIFTY_CENTS.getValueInCents() || [Coin.TWO_EUROS, Coin.FIFTY_CENTS]
-        Coin.TWO_EUROS.getValueInCents() + Coin.TWO_EUROS.getValueInCents()   || Optional.empty()
+        amountInCents || change
+        20            || Optional.empty()
+        50            || Optional.of([Coin.FIFTY_CENTS])
+        150           || Optional.of([Coin.ONE_EURO, Coin.FIFTY_CENTS])
+        250           || Optional.of([Coin.TWO_EUROS, Coin.FIFTY_CENTS])
+        400           || Optional.empty()
     }
 }
